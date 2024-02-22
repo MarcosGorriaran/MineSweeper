@@ -19,4 +19,10 @@ export class Vector2{
     set Y(value){
         this.#y=value
     }
+    toJSON(){
+        return `{
+            "x":"${this.X}",
+            "y":"${this.Y}"
+        }`;
+    }
 }
