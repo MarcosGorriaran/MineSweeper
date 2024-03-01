@@ -1,61 +1,86 @@
-import { Cell } from "./Cell";
-import { Vector2 } from "./Vector2";
+import { Cell } from "./Cell.js";
+import { Vector2 } from "./Vector2.js";
 
 export class GameBoard{
     #cells;
     #amountBombs;
     constructor(height, width, amountBombs){
-        this.Cells=[...Array(height)].map(e => Array(width).fill(undefined));
+        this.Cells=[...Array(height)].map(e => Array(width).fill(""));
+        this.#amountBombs=amountBombs
+        
+        for(let x in this.Cells){
+            for(let y in this.Cells[x]){
+                    this.Cells[x][y]=new Cell(false, 0,new Vector2(x,y));
+            }
+        }
         this.#SetRandomBombs(amountBombs);
     }
     
     #SetRandomBombs(amountBombs){
-        let previousCordinates=Array(amountBombs);
-
+        let repeated;
+        let cordinates;
         for(let i = 0; i<amountBombs; i++){
-            let repeated;
             //This may cause an infinite loop if the amount of bombs
             //is bigger than the amount of cells on the board.
             do{
-                let cordinates = new Vector2((Math.random()*this.Cells.length),(Math.random()*this.Cells[0].length));
-                repeated=!previousCordinates.some(element=>JSON.stringify(element)===JSON.stringify(cordinates));
+                cordinates = new Vector2(Math.round((Math.random()*(this.Cells.length-1))),Math.round((Math.random()*(this.Cells[0].length-1))));
+                repeated=this.CellInfo(cordinates.X,cordinates.Y).IsBomb;
             }while(repeated);
-            
-            previousCordinates[i]=cordinates;
-            this.Cells[cordinates.X,cordinates.Y]=new Cell(true,0,cordinates);
+            this.Cells[cordinates.X][cordinates.Y].IsBomb=true;
+            this.#SetAmountCellsAroundBomb(cordinates.X,cordinates.Y);
         }
     }
-    PlaceFlag(x, y){
-        this.Cells[x,y].IsFlaged=true;
-    }
-    RemoveFLag
-    
-    SearchMines(Vector2){
-        return this.SearchMines(Vector2.X, Vector2.Y);
-    }
-    SearchMines(x, y){
+    #SetAmountCellsAroundBomb(x, y){
         let sumBombs = 0;
         for(let i=x-1; i<=x+1;i++){
-            try{
+            
                 for(let j=y-1; j<=y+1; j++){
-                    if(j!=y && i!=x && Cells[i,j].IsBomb){
-                        sumBombs++;
+                    try{
+                        this.Cells[i][j].BombsAround++;
+                    }catch(error){
+
                     }
                 }
-            }catch(error){
-
-            }
+            
             
         }
         return sumBombs;
     }
+    InteractPlaceFlag(x, y){
+        if(this.Cells[x,y].IsFlaged){
+            this.Cells[x,y].IsFlaged=false;
+        }else{
+            this.Cells[x,y].IsFlaged=true;
+        }
+        
+    }
+    
+    RevealAllBlanks(x, y){
+        for(let i=x-1; i<=x+1;i++){
+                for(let j=y-1; j<=y+1;j++){
+                    
+                        this.Cells[i][j].IsRevealed=true;
+                    
+                        if(this.Cells[i][j].BombsAround==0 && j!=y && i!=x){
+                            
+                            this.RevealAllBlanks(i,j)
+                        }
+                    
+                        console.log(this.Cells[i][j]);
+                }
+        }
+        
+    }
     CellInfo(x, y){
-        return this.Cells[x,y];
+        return this.Cells[x][y];
     }
     get Cells(){
         return this.#cells;
     }
     set Cells(value){
         this.#cells=value;
+    }
+    get AmountBombs(){
+        return this.#amountBombs;
     }
 }

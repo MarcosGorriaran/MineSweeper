@@ -1,4 +1,4 @@
-import { Vector2 } from "./Vector2";
+import { Vector2 } from "./Vector2.js";
 export class Cell{
     #revealed;
     #isBomb;
@@ -43,5 +43,16 @@ export class Cell{
     }
     set Cordinates(value){
         this.#cordinates=value;
+    }
+    toJSON(){
+        return `
+        {
+            "revealed":"${this.IsRevealed}",
+            "bomb":"${this.IsBomb}",
+            "flaged":"${this.IsFlaged}",
+            "bombsAround":"${this.BombsAround}";,
+            "cordinates":"${this.Cordinates}"
+        }
+        `
     }
 }

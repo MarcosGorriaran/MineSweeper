@@ -1,0 +1,19 @@
+#GameBoard{
+    display: flex;
+    flex-direction: column;
+    background-color: gray;
+}
+#GameBoard>div{
+    display: flex;
+    
+    margin: 2px;
+}
+#GameBoard>div>div{
+    height: 50px;
+    width: 50px;
+    background-color: white;
+    margin: 2px;
+    text-align: center;
+    border-color: wheat;
+    border-style: solid;
+}
