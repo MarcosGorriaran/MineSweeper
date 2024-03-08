@@ -1,4 +1,4 @@
-import { Vector2 } from "./Vector2";
+import { Vector2 } from "./Vector2.js";
 export class Cell{
     #revealed;
     #isBomb;
@@ -12,6 +12,10 @@ export class Cell{
         this.IsFlaged=false;
         this.BombsAround=BombsAround;
         this.Cordinates=vectorCordinates;
+    }
+
+    SwitchFlag(){
+        this.#flaged= this.#flaged ? false : true;
     }
 
     get IsBomb(){
@@ -43,5 +47,16 @@ export class Cell{
     }
     set Cordinates(value){
         this.#cordinates=value;
+    }
+    toJSON(){
+        return `
+        {
+            "revealed":"${this.IsRevealed}",
+            "bomb":"${this.IsBomb}",
+            "flaged":"${this.IsFlaged}",
+            "bombsAround":"${this.BombsAround}";,
+            "cordinates":"${this.Cordinates}"
+        }
+        `
     }
 }

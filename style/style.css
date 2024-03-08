@@ -1,19 +1,33 @@
+body{
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
 #GameBoard{
+    align-content: center;
+    justify-content: center;
     display: flex;
     flex-direction: column;
-    background-color: gray;
+    width: 90%;
 }
 #GameBoard>div{
+    height: 70px;
     display: flex;
-    
-    margin: 2px;
+    align-items: center;
+    justify-content: center;
+    background-color: gray;
 }
-#GameBoard>div>div{
+.Cell{
     height: 50px;
     width: 50px;
     background-color: white;
     margin: 2px;
     text-align: center;
     border-color: wheat;
-    border-style: solid;
+    border-style:ridge;
+    border-radius: 8px;
+}
+.Hidden{
+    background-color: black;
+    color: white;
 }
