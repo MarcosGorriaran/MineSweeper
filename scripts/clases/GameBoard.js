@@ -47,11 +47,7 @@ export class GameBoard{
         return sumBombs;
     }
     InteractPlaceFlag(x, y){
-        if(this.Cells[x,y].IsFlaged){
-            this.Cells[x,y].IsFlaged=false;
-        }else{
-            this.Cells[x,y].IsFlaged=true;
-        }
+        this.Cells[x][y].SwitchFlag();
         
     }
     RevealTile(x, y){

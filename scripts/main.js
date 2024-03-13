@@ -1,5 +1,5 @@
-import { GameBoard } from "./clases/GameBoard.js";
-
+import { Driver } from "./clases/Driver.js";
+/*import { GameBoard } from "./clases/GameBoard.js";
 
 
 const HiddenClassName = "Hidden";
@@ -94,5 +94,5 @@ function AddCellEventListener(){
 function SetLostGame(){
     let clonedElement = element.cloneNode(true);
     element.parentNode.replaceChild(clonedElement,element);
-}
-window.addEventListener("load",init);
+}*/
+window.addEventListener("load",Driver.initGame);

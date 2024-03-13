@@ -9,6 +9,23 @@
     <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
+    <h3> Using the <i> Date() object </i> to find the time elapsed in JavaScript </h3>
+    <div id="output"> </div>
+    <script>
+        let output = document.getElementById('output');
+        function loopThrough() {
+            for (i = 0; i < 10000000; i++) {
+                
+                //Do nothing
+            }
+        }
+        let startTime = new Date();
+        //loopThrough();
+        let endTime = new Date();
+        let timeElapsed = endTime - startTime;
+        output.innerHTML += "Total time elapsed to loop through 600000 times: " + timeElapsed + " milliseconds.";
+        
+    </script>
     <div id="GameBoard"></div>
 </body>
 </html>
