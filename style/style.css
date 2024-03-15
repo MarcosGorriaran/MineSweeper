@@ -9,7 +9,7 @@ body{
     justify-content: center;
     display: flex;
     flex-direction: column;
-    width: 90%;
+    width: 100%;
 }
 #GameBoard>div{
     height: 70px;
@@ -23,10 +23,14 @@ body{
     width: 50px;
     background-color: white;
     margin: 2px;
+    padding: 0px;
     text-align: center;
     border-color: wheat;
     border-style:ridge;
     border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
 }
 .Hidden:active{
     background-color: gray;
