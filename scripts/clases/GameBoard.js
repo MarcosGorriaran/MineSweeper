@@ -134,6 +134,6 @@ export class GameBoard{
         return this.#amountBombs;
     }
     get score(){
-
+        return this.#score;
     }
 }

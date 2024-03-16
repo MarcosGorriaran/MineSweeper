@@ -5,4 +5,9 @@ export class Player{
         this.nick = nick;
         this.highScore = highScore;
     }
+    static JSONparse(JSONText){
+        let genericObject = JSON.parse(JSONText);
+
+        return new Player(genericObject.nick,genericObject.highScore);
+    }
 }

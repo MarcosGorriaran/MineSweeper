@@ -1,4 +1,5 @@
 import { GameBoard } from "./GameBoard.js";
+import {Player} from "./Player.js"
 export class Driver{
     static #HiddenClassName = "Hidden";
     static #CellClassName = "Cell";
@@ -7,8 +8,10 @@ export class Driver{
     static #FlagMark = "F";
     static #PlayerKey = "Player";
     static #InputDivClass = "input";
+    static #GameBoardID = "GameBoard";
     static #FormID = "GameOpt"
     static #PlayerFormID = "PlayerData";
+    static #PlayerNickID = "playerNick";
     static #GameFormID = "GameData";
     static #GameHeightInpID = "boardHeight";
     static #GameWidthInpID = "boardWidth";
@@ -49,6 +52,7 @@ export class Driver{
         </div>
     </div>
     `
+    static #SubmitInput = "<input type='submit'>";
     static player;
     static element;
     static board;
@@ -57,23 +61,44 @@ export class Driver{
         let form = document.getElementById(Driver.#FormID);
         let playerForm = form.querySelector("#"+Driver.#PlayerFormID);
         let gameForm = form.querySelector("#"+Driver.#GameFormID);
-        let sendButton = form.querySelector('input[type="submit"]');
+        let sendButton = document.createElement("input");
+        let playerRetrived = localStorage.getItem(Driver.#PlayerKey);
+        Driver.element = document.getElementById(Driver.#GameBoardID);
+        sendButton.setAttribute("type","submit");
         console.log(sendButton);
-        Driver.player = localStorage.getItem(Driver.#PlayerKey);
-        if(Driver.player==null){
+        console.log(Driver.#PlayerKey);
+        if(playerRetrived==null){
+            Driver.Player=null;
             playerForm.innerHTML=Driver.#PlayerForm;
         }else{
-            playerForm.innerHTML=`<p>Welcome ${Driver.player.nick}</p>
-                                  <p>Your HighScore is ${Driver.player.highScore}</p>`;
+            
+            Driver.player=(Player.JSONparse(playerRetrived));
+            Driver.UpdatePlayerInfo();
         }
         gameForm.innerHTML=Driver.#GameForm;
-
+        form.appendChild(sendButton);
         sendButton.addEventListener("click",function(Event){
             Event.preventDefault();
             let playerFormResult = Driver.player==null ? Driver.ValidatePlayerForm(playerForm):true;
             let gameFormResult = Driver.ValidateGameForm(gameForm);
             if(playerFormResult && gameFormResult) {
+                if(Driver.player==null){
+                    Driver.player=new Player(document.querySelector("#"+Driver.#PlayerNickID+">input").value,0);
+                }
                 
+
+                Driver.UpdatePlayerInfo();
+                
+                
+                Driver.UpdatePlayerSave();
+                let height = Number.parseInt(gameForm.querySelector("#"+Driver.#GameHeightInpID+">input").value);
+                let width = Number.parseInt(gameForm.querySelector("#"+Driver.#GameWidthInpID+">input").value);
+                let bombs = Number.parseInt(gameForm.querySelector("#"+Driver.#GameBombInpID+">input").value);
+                console.log(height, width, bombs);
+                Driver.board=new GameBoard(height, width, bombs);
+                Driver.CreateTableDOM();
+                gameForm.innerHTML="";
+                sendButton.remove();
             }
         });
     }
@@ -84,7 +109,15 @@ export class Driver{
         const DefElement = document.getElementById("GameBoard");
         const DefAmountBombs = 1;
         Driver.board=new GameBoard(DefHeight, DefWidth, DefAmountBombs);
-        Driver.CreateTableDOM(DefHeight, DefWidth, DefAmountBombs, DefElement);
+        Driver.CreateTableDOM(DefElement);
+    }
+    static UpdatePlayerInfo(){
+        let playerForm = document.getElementById(Driver.#PlayerFormID);
+        playerForm.innerHTML=`<p>Welcome ${Driver.player.nick}</p>
+                                    <p>Your HighScore is ${Driver.player.highScore}</p>`;
+    }
+    static UpdatePlayerSave(){
+        localStorage.setItem(Driver.#PlayerKey,JSON.stringify(Driver.player));
     }
     static ValidatePlayerForm(formElement){
         let inputs = formElement.querySelectorAll("."+Driver.#InputDivClass);
@@ -137,9 +170,7 @@ export class Driver{
         return returnVal;
         
     }
-    static CreateTableDOM( buildElement){
-        
-        Driver.element = buildElement;
+    static CreateTableDOM(){
 
         for(let elementx of Driver.board.Cells){
             let row = document.createElement("div");
@@ -220,16 +251,30 @@ export class Driver{
                     }
                     Driver.UpdateTableDOM();
                 });
+                Cells[j].addEventListener("contextmenu",function(event){
+                    event.preventDefault();
+                    let deleteEvents = Driver.board.InteractPlaceFlag(i,j);
+                    if(deleteEvents==1){
+                        Driver.SetWinGame()
+                    }
+                    Driver.UpdateTableDOM();
+                })
             }
         }
     }
     static SetLostGame(){
         console.log("You loose");
-        this.DisableBoard();
+        Driver.DisableBoard();
     }
     static SetWinGame(){
-        console.log("You win")
-        this.DisableBoard();
+        console.log("You win");
+        if(Driver.player.highScore<Driver.board.score){
+            Driver.player.highScore=Driver.board.score;
+            Driver.UpdatePlayerInfo();
+            Driver.UpdatePlayerSave();
+        }
+        
+        Driver.DisableBoard();
     }
     static DisableBoard(){
         let clonedElement = Driver.element.cloneNode(true);
