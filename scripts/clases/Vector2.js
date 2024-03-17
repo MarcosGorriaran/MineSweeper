@@ -1,3 +1,6 @@
+/**
+ * This object is responsible of storing the cordinates information of an object in a 2D environment.
+ */
 export class Vector2{
     #x
     #y
@@ -19,6 +22,10 @@ export class Vector2{
     set Y(value){
         this.#y=value
     }
+    /**
+     * It returns a string containing the parsed information of the cell using the JSON format.
+     * @returns {string}
+     */
     toJSON(){
         return `{
             "x":"${this.X}",

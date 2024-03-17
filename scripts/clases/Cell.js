@@ -13,7 +13,9 @@ export class Cell{
         this.BombsAround=BombsAround;
         this.Cordinates=vectorCordinates;
     }
-
+    /**
+     * It will change the flag to true if it is false or false if it is true.
+     */
     SwitchFlag(){
         this.#flaged= this.#flaged ? false : true;
     }
@@ -48,6 +50,10 @@ export class Cell{
     set Cordinates(value){
         this.#cordinates=value;
     }
+    /**
+     * It returns a string containing the parsed information of the cell using the JSON format.
+     * @returns {string}
+     */
     toJSON(){
         return `
         {

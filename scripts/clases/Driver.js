@@ -1,5 +1,11 @@
 import { GameBoard } from "./GameBoard.js";
 import {Player} from "./Player.js"
+
+/**
+ * This is the controller responsible of controling how the data of the
+ * models are managed trough the interface the user uses which it also controlls.
+ * It is a static class.
+ */
 export class Driver{
     static #HiddenClassName = "Hidden";
     static #CellClassName = "Cell";
@@ -87,6 +93,10 @@ export class Driver{
     static element;
     static board;
 
+    /**
+     * Executed after window load event triggers and it will prepare the interface
+     * and the information needed to play the minesweeper game
+     */
     static init(){
         let form = document.getElementById(Driver.#FormID);
         let playerForm = form.querySelector("#"+Driver.#PlayerFormID);
@@ -137,15 +147,30 @@ export class Driver{
             }
         });
     }
+    /**
+     * This method is responsible of updating the information
+     * displayed on the interface about the player.
+     */
     static UpdatePlayerInfo(){
         let playerForm = document.getElementById(Driver.#PlayerFormID);
         playerForm.innerHTML=`<h2>Player Info</h2>
                               <p>Welcome ${Driver.player.nick}</p>
                               <p>Your HighScore is ${Driver.player.highScore}</p>`;
     }
+    /**
+     * This method is responsible of updating the information
+     * stored on the cookies about the player.
+     */
     static UpdatePlayerSave(){
         localStorage.setItem(Driver.#PlayerKey,JSON.stringify(Driver.player));
     }
+    /**
+     * This method takes care of validating the form containing the information about the player
+     * taking care of showing the information on the interface and returning true if everything passes all validations
+     * or false if it doesn't.
+     * @param {Node} formElement 
+     * @returns 
+     */
     static ValidatePlayerForm(formElement){
         let inputs = formElement.querySelectorAll("."+Driver.#InputDivClass);
         let returnVal = true;
@@ -175,6 +200,13 @@ export class Driver{
         }
         return returnVal;
     }
+    /**
+     * Responsible of validating the information about the game and comunicating
+     * any troubles on the process to the user and it will return true if all input elements pass al validations
+     * or false if it doesn't.
+     * @param {Node} formElement 
+     * @returns 
+     */
     static ValidateGameForm(formElement){
         let inputs = formElement.querySelectorAll("."+Driver.#InputDivClass);
         let height = document.getElementById(Driver.#GameHeightInpID);
@@ -211,6 +243,9 @@ export class Driver{
         return returnVal;
         
     }
+    /**
+     * Responsible of creating the board based on what the object board contains
+     */
     static CreateTableDOM(){
 
         for(let elementx of Driver.board.Cells){
@@ -238,6 +273,10 @@ export class Driver{
         }
         Driver.AddCellEventListener();
     }
+    /**
+     * It will update the information displayed on the board based on
+     * what information does board contain.
+     */
     static UpdateTableDOM(){
         let rowList = document.getElementsByClassName(Driver.#RowClassName);
         let imgBase = document.createElement("img");
@@ -267,6 +306,10 @@ export class Driver{
         }
         
     }
+    /**
+     * Responsible of creating all the events based on the actions the user can make
+     * on a cell and the actions they lead to.
+     */
     static AddCellEventListener(){
         
         let rowList = Driver.element.getElementsByClassName(Driver.#RowClassName);
@@ -312,11 +355,20 @@ export class Driver{
             }
         }
     }
+    /**
+     * It will disable the board events and send a defeat message.
+     */
     static SetLostGame(){
         let resultBox = document.getElementById(Driver.#GameResultID);
         resultBox.innerHTML=Driver.#DefeatMSG;
         Driver.DisableBoard();
     }
+    /**
+     * It will disable the board events, send a victory message and update
+     * the player highscore if the board score ends up being higher than the player
+     * actual highscore and calling the other methods responsible of updating this information
+     * on the interface and on the stored information on the cookies.
+     */
     static SetWinGame(){
         let resultBox = document.getElementById(Driver.#GameResultID);
         resultBox.innerHTML=Driver.#VictoryMSG;
@@ -328,6 +380,11 @@ export class Driver{
         
         Driver.DisableBoard();
     }
+    /**
+     * This method is responsible of disabling the board by cloning it
+     * and replacing it with its clone because a cloned node doesn't have the events
+     * of the original and by replacing it with the cloned node, the events no longer exist.
+     */
     static DisableBoard(){
         let clonedElement = Driver.element.cloneNode(true);
         Driver.element.parentNode.replaceChild(clonedElement,Driver.element);
