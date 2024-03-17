@@ -139,7 +139,6 @@ export class Driver{
                 let height = Number.parseInt(gameForm.querySelector("#"+Driver.#GameHeightInpID+">input").value);
                 let width = Number.parseInt(gameForm.querySelector("#"+Driver.#GameWidthInpID+">input").value);
                 let bombs = Number.parseInt(gameForm.querySelector("#"+Driver.#GameBombInpID+">input").value);
-                console.log(height, width, bombs);
                 Driver.board=new GameBoard(height, width, bombs);
                 Driver.CreateTableDOM();
                 gameForm.innerHTML="";
