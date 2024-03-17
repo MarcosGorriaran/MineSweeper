@@ -11,19 +11,43 @@ export class Driver{
     static #GameBoardID = "GameBoard";
     static #FormID = "GameOpt"
     static #PlayerFormID = "PlayerData";
+    static #PlayerBirthDate = "birthDate";
     static #PlayerNickID = "playerNick";
     static #GameFormID = "GameData";
     static #GameHeightInpID = "boardHeight";
     static #GameWidthInpID = "boardWidth";
     static #GameBombInpID = "boardBombs";
+    static #MinAgeRequirement = "The user must be over 18";
     static #ValueMissingMSG = "This value can not be empty";
+    static #ValueTypeIsWrong = "The value type is invalid, it must be of the following type: ";
+    static #PatternEmailError = "The patern is wrong, it must be an email of the ITB (name.lastname@itb.cat)(name.lastname.7e7@itb.cat)";
     static #DoubleClickTime = 200;
+    static #MinAge=18;
     static #PlayerForm = `
     <div>
         <label>Nickname: </label>
-       
         <div class='input' id='playerNick'>
             <input type='text' required>
+            <span></span>
+        </div>
+        <label>Name: </label>
+        <div class='input'>
+            <input type='text'>
+            <span></span>
+        </div>
+        <label>Lastname: </label>
+        <div class='input'>
+            <input type='text'>
+            <span></span>
+        </div>
+        <label>Birth Date:</label>
+        <div class='input' id='birthDate'>
+            <input type="date" required>
+            <span></span>
+        </div>
+        <label>Email:</label>
+        <div class='input'>
+            <input type='email' pattern='^[\w]+.[\w]+(.[0-9][a-z][0-9])?@itb.cat$'>
             <span></span>
         </div>
     </div>
@@ -52,7 +76,6 @@ export class Driver{
         </div>
     </div>
     `
-    static #SubmitInput = "<input type='submit'>";
     static player;
     static element;
     static board;
@@ -63,13 +86,18 @@ export class Driver{
         let gameForm = form.querySelector("#"+Driver.#GameFormID);
         let sendButton = document.createElement("input");
         let playerRetrived = localStorage.getItem(Driver.#PlayerKey);
+        const AddZeroBefore = 10;
         Driver.element = document.getElementById(Driver.#GameBoardID);
         sendButton.setAttribute("type","submit");
-        console.log(sendButton);
-        console.log(Driver.#PlayerKey);
         if(playerRetrived==null){
             Driver.Player=null;
             playerForm.innerHTML=Driver.#PlayerForm;
+            
+            let date = playerForm.querySelector("#"+Driver.#PlayerBirthDate).querySelector("input");
+            let maxDate = new Date();
+            
+            maxDate.setFullYear(maxDate.getFullYear()-Driver.#MinAge);
+            date.setAttribute("max",`${maxDate.getFullYear()}-${(maxDate.getMonth()+1)<AddZeroBefore ? "0"+(maxDate.getMonth()+1):(maxDate.getMonth()+1)}-${(maxDate.getDate())<AddZeroBefore ? "0"+maxDate.getDate():maxDate.getDate()}`);
         }else{
             
             Driver.player=(Player.JSONparse(playerRetrived));
@@ -124,11 +152,25 @@ export class Driver{
         let returnVal = true;
         for(let element of inputs){
             let input = element.querySelector("input");
+            let span = element.querySelector("span");
             if(input.validity.valueMissing){
-                document.getElementsByTagName("span")[0].innerHTML=Driver.#ValueMissingMSG;
+                span.innerHTML=Driver.#ValueMissingMSG;
                 returnVal = false;
+            }else if(input.validity.typeMismatch){
+                span.innerHTML=Driver.#ValueTypeIsWrong+input.getAttribute("type");
+                returnVal = false;
+            }else if(input.validity.patternMismatch){
+                if(input.getAttribute("type")=="email"){
+                    span.innerHTML=Driver.#PatternEmailError;
+                }
+                returnVal=false;
+            }else if(input.validity.rangeOverflow){
+                if(element.getAttribute("id")==Driver.#PlayerBirthDate){
+                    span.innerHTML=Driver.#MinAgeRequirement;
+                }
+                returnVal=false;
             }else{
-                document.getElementsByTagName("span")[0].innerHTML="";
+                span.innerHTML="";
             }
 
         }

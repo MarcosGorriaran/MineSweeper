@@ -4,6 +4,15 @@ body{
     align-content: center;
     justify-content: center;
 }
+input{
+    border-width: 4px;
+    height: 2rem;
+    border-radius: 10px;
+    font-size: 1.5em;
+}
+input[type="submit"]{
+    font-size: 1rem;
+}
 #GameBoard{
     align-content: center;
     justify-content: center;
@@ -42,4 +51,7 @@ body{
 div.input{
     display: flex;
     flex-direction: column;
+}
+#GameOpt>div{
+    margin-bottom: 30px;
 }
