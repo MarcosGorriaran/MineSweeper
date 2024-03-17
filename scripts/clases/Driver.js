@@ -30,8 +30,8 @@ export class Driver{
     static #ValueMissingMSG = "This value can not be empty";
     static #ValueTypeIsWrong = "The value type is invalid, it must be of the following type: ";
     static #PatternEmailError = "The patern is wrong, it must be an email of the ITB (name.lastname@itb.cat)(name.lastname.7e7@itb.cat)";
-    static #PathFlag = "Img/Flag.png";
-    static #PathBomb = "Img/Bomb.png"
+    static #PathFlag = "src/Flag.png";
+    static #PathBomb = "src/Bomb.png"
     static #DoubleClickTime = 200;
     static #MinAge=18;
     static #PlayerForm = `
