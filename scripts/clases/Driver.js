@@ -21,9 +21,12 @@ export class Driver{
     static #ValueMissingMSG = "This value can not be empty";
     static #ValueTypeIsWrong = "The value type is invalid, it must be of the following type: ";
     static #PatternEmailError = "The patern is wrong, it must be an email of the ITB (name.lastname@itb.cat)(name.lastname.7e7@itb.cat)";
+    static #PathFlag = "Img/Flag.png";
+    static #PathBomb = "Img/Bomb.png"
     static #DoubleClickTime = 200;
     static #MinAge=18;
     static #PlayerForm = `
+    <h2>Player Info</h2>
     <div>
         <label>Nickname: </label>
         <div class='input' id='playerNick'>
@@ -47,12 +50,13 @@ export class Driver{
         </div>
         <label>Email:</label>
         <div class='input'>
-            <input type='email' pattern='^[\w]+.[\w]+(.[0-9][a-z][0-9])?@itb.cat$'>
+            <input type='email' pattern='^[\\w]+.[\\w]+(.[0-9][a-z][0-9])?@itb.cat$'>
             <span></span>
         </div>
     </div>
     `;
     static #GameForm = `
+    <h2>Game Info</h2>
     <div>
         <label>Height: </label>
         <div class='input' id='boardHeight'>
@@ -130,19 +134,11 @@ export class Driver{
             }
         });
     }
-    static initGame(Event){
-        console.log(localStorage.getItem("ss"));
-        const DefHeight = 5;
-        const DefWidth = 5;
-        const DefElement = document.getElementById("GameBoard");
-        const DefAmountBombs = 1;
-        Driver.board=new GameBoard(DefHeight, DefWidth, DefAmountBombs);
-        Driver.CreateTableDOM(DefElement);
-    }
     static UpdatePlayerInfo(){
         let playerForm = document.getElementById(Driver.#PlayerFormID);
-        playerForm.innerHTML=`<p>Welcome ${Driver.player.nick}</p>
-                                    <p>Your HighScore is ${Driver.player.highScore}</p>`;
+        playerForm.innerHTML=`<h2>Player Info</h2>
+                              <p>Welcome ${Driver.player.nick}</p>
+                              <p>Your HighScore is ${Driver.player.highScore}</p>`;
     }
     static UpdatePlayerSave(){
         localStorage.setItem(Driver.#PlayerKey,JSON.stringify(Driver.player));
@@ -241,32 +237,40 @@ export class Driver{
     }
     static UpdateTableDOM(){
         let rowList = document.getElementsByClassName(Driver.#RowClassName);
+        let imgBase = document.createElement("img");
+        imgBase.setAttribute("class","gameImg");
         for(let i = 0; i< Driver.board.Cells.length; i++){
             let rowCells = rowList[i].getElementsByClassName(Driver.#CellClassName);
             for(let j = 0; j<Driver.board.Cells[i].length; j++){
-                let cellContent = rowCells[j].getElementsByTagName("p")[0];
-                cellContent.innerHTML="";
+                let cellContent = document.createElement("p");
+                rowCells[j].innerHTML="";
                 if(Driver.board.Cells[i][j].IsRevealed){
                     rowCells[j].classList.remove([Driver.#HiddenClassName]);
                     if(Driver.board.Cells[i][j].IsBomb){
-                        cellContent.innerHTML=Driver.#BombMark;
+                        let bombImg = imgBase.cloneNode(true);
+                        bombImg.setAttribute("src",Driver.#PathBomb);
+                        rowCells[j].appendChild(bombImg);
                     }else if(Driver.board.Cells[i][j].BombsAround>0){
-                        cellContent.innerHTML=Driver.board.Cells[i][j].BombsAround;
+                        let numBombs = cellContent.cloneNode(true);
+                        rowCells[j].appendChild(numBombs);
+                        numBombs.innerHTML=Driver.board.Cells[i][j].BombsAround;
                     }
                 }else if(Driver.board.Cells[i][j].IsFlaged){
-                    cellContent.innerHTML=Driver.#FlagMark;
+                    let flagImg = imgBase.cloneNode(true);
+                    flagImg.setAttribute("src",Driver.#PathFlag);
+                    rowCells[j].appendChild(flagImg);
                 }
             }
         }
         
     }
     static AddCellEventListener(){
-        let actualTimeout;
+        
         let rowList = Driver.element.getElementsByClassName(Driver.#RowClassName);
         for(let i=0;i<rowList.length;i++){
             let Cells=rowList[i].getElementsByClassName(Driver.#HiddenClassName);
             for(let j=0; j<Cells.length;j++){
-                
+                let actualTimeout;
                 Cells[j].addEventListener("click",function(Event){
                     if(typeof actualTimeout=== "undefined"){
                         actualTimeout = setTimeout(function(){
@@ -295,6 +299,7 @@ export class Driver{
                 });
                 Cells[j].addEventListener("contextmenu",function(event){
                     event.preventDefault();
+                    actualTimeout=undefined;
                     let deleteEvents = Driver.board.InteractPlaceFlag(i,j);
                     if(deleteEvents==1){
                         Driver.SetWinGame()
