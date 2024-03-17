@@ -83,3 +83,7 @@ div.input{
 #GameOpt>div>div{
     width: 50%;
 }
+#GameResult{
+    color:white;
+    margin: auto;
+}

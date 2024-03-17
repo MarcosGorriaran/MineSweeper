@@ -17,6 +17,9 @@ export class Driver{
     static #GameHeightInpID = "boardHeight";
     static #GameWidthInpID = "boardWidth";
     static #GameBombInpID = "boardBombs";
+    static #GameResultID = "GameResult";
+    static #VictoryMSG = "You found all the bombs and revealed all the tiles. Congratulations";
+    static #DefeatMSG = "You've steped on a mine, you loose";
     static #MinAgeRequirement = "The user must be over 18";
     static #ValueMissingMSG = "This value can not be empty";
     static #ValueTypeIsWrong = "The value type is invalid, it must be of the following type: ";
@@ -310,11 +313,13 @@ export class Driver{
         }
     }
     static SetLostGame(){
-        console.log("You loose");
+        let resultBox = document.getElementById(Driver.#GameResultID);
+        resultBox.innerHTML=Driver.#DefeatMSG;
         Driver.DisableBoard();
     }
     static SetWinGame(){
-        console.log("You win");
+        let resultBox = document.getElementById(Driver.#GameResultID);
+        resultBox.innerHTML=Driver.#VictoryMSG;
         if(Driver.player.highScore<Driver.board.score){
             Driver.player.highScore=Driver.board.score;
             Driver.UpdatePlayerInfo();
